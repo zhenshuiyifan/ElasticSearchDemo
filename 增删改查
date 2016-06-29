@@ -606,6 +606,201 @@ GET /library/books/_search
 
 
 
-# 中文分词器 smartcn
+# ik 中文分词器
+PUT index
+
+PUT index/fulltext/_mapping 
+{
+    "fulltext": {
+             "_all": {
+            "analyzer": "ik_max_word",
+            "search_analyzer": "ik_max_word",
+            "term_vector": "no",
+            "store": "false"
+        },
+        "properties": {
+            "content": {
+                "type": "string",
+                "store": "no",
+                "term_vector": "with_positions_offsets",
+                "analyzer": "ik_max_word",
+                "search_analyzer": "ik_max_word",
+                "include_in_all": "true",
+                "boost": 8
+            }
+        }
+    }
+}
+
+POST /index/fulltext/1
+{
+    "content":"美国留给伊拉克的是个烂摊子吗"
+}
+
+POST /index/fulltext/2
+{
+    "content":"公安部：各地校车将享最高路权"
+}
+
+POST /index/fulltext/3
+{
+    "content":"中韩渔警冲突调查：韩警平均每天扣1艘中国渔船"
+}
+
+POST /index/fulltext/4
+{
+    "content":"中国驻洛杉矶领事馆遭亚裔男子枪击 嫌犯已自首"
+}
+
+GET /index/fulltext/_search
+{
+    "query": {"term": {
+      
+          "content": "中国"
+       
+    }}
+}
+
+# 没有使用ik分词器
+
+POST /noik/fulltext/1
+{
+    "content":"美国留给伊拉克的是个烂摊子吗"
+}
+
+POST /noik/fulltext/2
+{
+    "content":"公安部：各地校车将享最高路权"
+}
+
+POST /noik/fulltext/3
+{
+    "content":"中韩渔警冲突调查：韩警平均每天扣1艘中国渔船"
+}
+
+POST /noik/fulltext/4
+{
+    "content":"中国驻洛杉矶领事馆遭亚裔男子枪击 嫌犯已自首"
+}
+
+GET /noik/fulltext/_search
+{
+    "query": {"term": {
+      
+          "content": "中国"
+       
+    }}
+}
+
+
+PUT ctrip
+
+DELETE ctrip
+
+
+PUT ctrip/hotel/_mapping
+{
+  
+    "properties": {
+        "hotelID": {
+            "type": "long"
+        },
+        "hotelName":{
+            "type": "string",
+            "store": "no",
+            "term_vector": "with_positions_offsets",
+            "analyzer": "ik_syno",
+            "search_analyzer": "ik_syno",
+            "include_in_all": "true",
+            "boost": 8
+        },
+         "hotelDescription":{
+            "type": "string",
+            "store": "no",
+            "term_vector": "with_positions_offsets",
+            "analyzer": "ik_syno",
+            "search_analyzer": "ik_syno",
+            "include_in_all": "true",
+            "boost": 8
+        },
+        "roomID": {
+            "type": "long"
+        },
+        "roomName":{
+            "type": "string",
+            "store": "no",
+            "term_vector": "with_positions_offsets",
+            "analyzer": "ik_syno",
+            "search_analyzer": "ik_syno",
+            "include_in_all": "true",
+            "boost": 8
+        },
+         "roomDescription":{
+            "type": "string",
+            "store": "no",
+            "term_vector": "with_positions_offsets",
+            "analyzer": "ik_syno",
+            "search_analyzer": "ik_syno",
+            "include_in_all": "true",
+            "boost": 8
+        }
+    }
+}
+
+
+POST /ctrip/hotel/1
+{
+    "hotelID":10001,
+    "roomID":101,
+    "hotelName":"千岛湖绿城度假酒店",
+    "roomName":"湖景豪华大床房",
+    "roomDescription":"建筑面积79平方，不可以加床，最多可以入住2人",
+    "hotelDescription":"千岛湖绿城度假酒店位于新安北路县政府隔壁，坐拥千岛湖镇核心的商业街区，三面环湖，有得天独厚的稀缺自然景观"
+}
+
+
+POST /ctrip/hotel/2
+{
+    "hotelID":10001,
+    "roomID":102,
+    "hotelName":"千岛湖绿城度假酒店",
+    "roomName":"园景标准双床房",
+    "roomDescription":"建筑面积79平方，不可以加床，最多可以入住2人",
+    "hotelDescription":"千岛湖绿城度假酒店位于新安北路县政府隔壁，坐拥千岛湖镇核心的商业街区，三面环湖，有得天独厚的稀缺自然景观。"
+}
+
+GET /ctrip/_search
+{
+    "query": {"term": { 
+          "hotelName": "酒店"
+    }       
+    }
+}
+
+GET /ctrip/_search
+{
+    "query": {"term": { 
+          "hotelDescription": "新安北路"
+    }       
+    }
+}
+
+GET /ctrip/_search
+{
+    "query": {"term": { 
+          "roomName":"园景"
+    }       
+    }
+}
+
+GET /ctrip/_search
+{
+    "query": {"term": { 
+          "roomDescription": "建筑面积"
+    }       
+    }
+}
+
+GET /ctrip/hotel/_search
 
 
